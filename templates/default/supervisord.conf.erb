@@ -1,0 +1,60 @@
+[unix_http_server]
+file=/tmp/supervisor.sock
+
+[inet_http_server]
+port=*:9001
+;username=super
+;password=super
+
+[supervisord]
+logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/supervisord.log
+pidfile=<%= node["webscreenshots"]["supervisord"]["piddir"] %>/supervisord.pid
+nodaemon=true
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock
+
+[program:redis]
+command=<%= node["webscreenshots"]["home"] %>/bin/redis-server
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/redis.log
+redirect_stderr=true
+priority=10
+
+; check out https://github.com/celery/celery/tree/master/extra/supervisord
+[program:celeryd]
+command=<%= node["webscreenshots"]["home"] %>/bin/celery worker -c 4 -E -A webscreenshots.celeryapp -l info
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/celeryd.log
+redirect_stderr=true
+startsecs=10
+stopwaitsecs=300
+;stopsignal=KILL
+killasgroup=true
+priority=20
+
+; check out https://github.com/celery/celery/tree/master/extra/supervisord
+[program:celerybeat]
+command=<%= node["webscreenshots"]["home"] %>/bin/celery beat -A webscreenshots.celeryapp -l info
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/celerybeat.log
+redirect_stderr=true
+startsecs=10
+;stopwaitsecs=300
+;stopsignal=KILL
+priority=30
+
+[program:flower]
+command=<%= node["webscreenshots"]["home"] %>/bin/celery flower --broker=redis://localhost:6379/0
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/flower.log
+redirect_stderr=true
+priority=40
+
+[program:gunicorn_django]
+directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+command=<%= node["webscreenshots"]["home"] %>/bin/python manage.py run_gunicorn 0.0.0.0:8000
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/django.log
+redirect_stderr=true
+priority=50
+;no adminmedia:
+;command=<%= node["webscreenshots"]["home"] %>/bin/gunicorn_django --workers=2 --bind 0.0.0.0:8000

@@ -1,0 +1,10 @@
+description     "supervisor"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+
+chdir <%= node["webscreenshots"]["home"] %>
+
+exec <%= node["webscreenshots"]["home"] %>/bin/supervisord -u <%= node["webscreenshots"]["user"] %> --nodaemon --configuration <%= node["webscreenshots"]["home"] %>/etc/supervisord.conf

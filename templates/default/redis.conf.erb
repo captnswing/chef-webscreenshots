@@ -1,0 +1,69 @@
+daemonize no
+pidfile /var/run/redis/redis-server.pid
+port <%= node['redis']['port'] %>
+timeout <%= node['redis']['timeout'] %>
+loglevel <%= node['redis']['loglevel'] %>
+logfile /var/log/redis/redis-server.log
+databases 16
+
+save 900 1
+save 300 10
+save 60 10000
+stop-writes-on-bgsave-error yes
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+dir <%= node['redis']['source']['dbdir'] %>
+
+slave-serve-stale-data yes
+
+slave-read-only yes
+
+slave-priority 100
+
+
+<% if node['redis']['password'] %>
+requirepass <%= node['redis']['password'] %>
+<% end %>
+
+<% if node['redis']['maxmemory'] -%>
+maxmemory <%= node['redis']['maxmemory'] %>
+<% end -%>
+
+
+<% if node['redis']['maxmemory_policy'] -%>
+maxmemory-policy <%= node['redis']['maxmemory_policy'] %>
+<% end -%>
+
+
+appendonly no
+
+
+appendfsync everysec
+
+no-appendfsync-on-rewrite no
+
+
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+
+lua-time-limit 5000
+
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+
+hash-max-ziplist-entries 512
+hash-max-ziplist-value 64
+
+list-max-ziplist-entries 512
+list-max-ziplist-value 64
+set-max-intset-entries 512
+zset-max-ziplist-entries 128
+zset-max-ziplist-value 64
+
+activerehashing yes
+
+
+client-output-buffer-limit normal 0 0 0
+client-output-buffer-limit slave 256mb 64mb 60
+client-output-buffer-limit pubsub 32mb 8mb 60
