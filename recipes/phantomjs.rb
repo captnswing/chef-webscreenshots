@@ -6,6 +6,7 @@ remote_file "/tmp/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}.ta
   source node["webscreenshots"]["phantomjs"]["uri"]
   mode "0644"
   action :create_if_missing
+  not_if "test -e /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64"
 end
 
 bash "install phantomjs" do
@@ -15,5 +16,5 @@ bash "install phantomjs" do
     tar -jxvf phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}.tar.bz2
     mv phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64 /opt
   EOS
-  creates "/opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64"
+  not_if "test -e /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64"
 end
