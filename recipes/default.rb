@@ -129,3 +129,16 @@ end
 include_recipe "webscreenshots::redis"
 include_recipe "webscreenshots::phantomjs"
 include_recipe "webscreenshots::supervisord"
+
+case node["platform"]
+  when "ubuntu"
+    bash "disable apache2" do
+      user "root"
+      code <<-EOS
+        update-rc.d -f apache2 remove
+        /usr/sbin/apachectl stop
+      EOS
+      only_if "ls /etc/rc*.d/* | grep apache2"
+    end
+end
+
