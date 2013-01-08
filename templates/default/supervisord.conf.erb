@@ -50,11 +50,26 @@ stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/flower.log
 redirect_stderr=true
 priority=40
 
+;[program:uwsgi_django]
+;directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+;user=webscreenshots
+;command=<%= node["webscreenshots"]["working_dir"] %> --pp  -H /home/youruser/virtualenv/myblog --module dispatch --socket localhost:10001 --master
+;stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/uwsgi_django.log
+;redirect_stderr=true
+;environment=DJANGO_SETTINGS_MODULE='settings'
+;autostart=true
+;autorestart=true
+;priority=50
+;stopsignal=QUIT
+
 [program:gunicorn_django]
 directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+user=webscreenshots
 command=<%= node["webscreenshots"]["home"] %>/bin/python manage.py run_gunicorn 0.0.0.0:8000
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/django.log
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/gunicorn_django.log
 redirect_stderr=true
+autostart=true
+autorestart=true
 priority=50
 ;no adminmedia:
 ;command=<%= node["webscreenshots"]["home"] %>/bin/gunicorn_django --workers=2 --bind 0.0.0.0:8000

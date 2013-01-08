@@ -71,6 +71,7 @@ python_packages = [
     "psycopg2",
     "python-dateutil",
     "pytz",
+    "uwsgi",
     "supervisor"
 ]
 
@@ -129,6 +130,7 @@ end
 include_recipe "webscreenshots::redis"
 include_recipe "webscreenshots::phantomjs"
 include_recipe "webscreenshots::supervisord"
+#include_recipe "nginx::source"
 
 case node["platform"]
   when "ubuntu"
@@ -141,4 +143,3 @@ case node["platform"]
       only_if "ls /etc/rc*.d/* | grep apache2"
     end
 end
-
