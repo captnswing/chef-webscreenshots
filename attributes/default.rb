@@ -17,6 +17,7 @@ default["webscreenshots"]["vagrant"] = node["kernel"]["modules"].attribute?("vbo
 # required for chef-solo
 set["postgresql"]["password"]["postgres"] = "postgres"
 
-override["nginx"]["version"] = "1.3.10"
-override["nginx"]["source"]["checksum"] = "248c43a4f77b9add6eaad2"
-override["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
+default["nginx"]["version"] = "1.3.10"
+default["nginx"]["source"]["url"] = "http://nginx.org/download/nginx-#{node["nginx"]["version"]}.tar.gz"
+default["nginx"]["source"]["checksum"] = "248c43a4f77b9add6eaad2"
+default["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
