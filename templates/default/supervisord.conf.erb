@@ -25,7 +25,7 @@ priority=10
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celeryd]
-directory=<%= node["webscreenshots"]["home"] %>
+directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 command=<%= node["webscreenshots"]["home"] %>/bin/celery worker -c 4 -E -A webscreenshots.celeryapp -l info
 stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/celeryd.log
 redirect_stderr=true
@@ -37,8 +37,8 @@ priority=20
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celerybeat]
-directory=<%= node["webscreenshots"]["home"] %>
-command=<%= node["webscreenshots"]["home"] %>/bin/celery beat -A webscreenshots.celeryapp -l info
+directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+command=<%= node["webscreenshots"]["home"] %>/bin/celery beat -A webscreenshots.celeryapp -l debug
 stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/celerybeat.log
 redirect_stderr=true
 startsecs=10
