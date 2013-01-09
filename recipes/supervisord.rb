@@ -9,6 +9,8 @@ end
 template "#{node["webscreenshots"]["home"]}/etc/supervisord.conf" do
   source "supervisord.conf.erb"
   mode 0644
+  owner node["webscreenshots"]["user"]
+  group node["webscreenshots"]["group"]
   notifies :restart, "service[supervisor]"
 end
 

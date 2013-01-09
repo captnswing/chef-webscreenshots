@@ -8,8 +8,8 @@ server {
     server_name example.com;
     charset utf-8;
 
-    error_log <%= node["webscreenshots"]["supervisord"]["logdir"] %>/nginx-error.log info;
-    access_log <%= node["webscreenshots"]["supervisord"]["logdir"] %>/nginx-access.log;
+    error_log <%= node["webscreenshots"]["home"] %>/var/log/nginx-webscreenshots-error.log info;
+    access_log <%= node["webscreenshots"]["home"] %>/var/log/nginx-webscreenshots-access.log;
 
     # from ---> /wsimages/280x280/2013/01/07/aftonbladet.se/23.00-thumb.jpg
     # to   ---> http://d2np6cnk6s6ggj.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
