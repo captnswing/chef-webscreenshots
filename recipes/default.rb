@@ -50,6 +50,8 @@ case node["platform_family"]
     package "libfreetype6-dev"
     # for flower
     package "git-all"
+    #for nginx
+    package "libgd2-xpm-dev"
   when "rhel"
     # for PIL / pillow
     package "libjpeg-devel"
@@ -130,7 +132,23 @@ end
 include_recipe "webscreenshots::redis"
 include_recipe "webscreenshots::phantomjs"
 include_recipe "webscreenshots::supervisord"
-#include_recipe "nginx::source"
+include_recipe "nginx::source"
+
+template "#{node["webscreenshots"]["working_dir"]}/src/webscreenshots/uwsgi.ini" do
+  source "uwsgi.ini.erb"
+  owner my_user
+  group my_group
+  mode 0644
+  notifies :restart, "service[supervisor]"
+end
+
+template "/etc/nginx/conf.d/webscreenshots.conf" do
+  source "nginx-webscreenshots.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :reload, "service[nginx]"
+end
 
 case node["platform"]
   when "ubuntu"

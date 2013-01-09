@@ -17,3 +17,4 @@ bash "install phantomjs" do
   EOS
   not_if "test -e /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64"
 end
+

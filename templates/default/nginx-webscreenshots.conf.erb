@@ -1,0 +1,68 @@
+# https://gist.github.com/3094281
+# http://nginx.org/en/docs/http/ngx_http_image_filter_module.html
+# http://adw0rd.com/2012/11/10/django-nginx-image/en/
+# http://serverfault.com/questions/186783/nginx-saving-images-resized-via-image-filter-locally
+server {
+    listen 80 default_server;
+
+    server_name example.com;
+    charset utf-8;
+
+    error_log <%= node["webscreenshots"]["supervisord"]["logdir"] %>/nginx-error.log info;
+    access_log <%= node["webscreenshots"]["supervisord"]["logdir"] %>/nginx-access.log;
+
+    # from ---> /wsimages/280x280/2013/01/07/aftonbladet.se/23.00-thumb.jpg
+    # to   ---> http://d2np6cnk6s6ggj.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
+    location ~ /wsimages/(\d+x\d+)(/.*)$ {
+        rewrite_log on;
+        rewrite ^/wsimages/(\d+)x(\d+)(/.*)$ $3 break;
+        proxy_pass http://d2np6cnk6s6ggj.cloudfront.net;
+        image_filter resize $1 $2;
+        image_filter_buffer 100M;
+        expires 30d;
+        error_page 415 = /empty;
+    }
+
+    # from ---> /wsimages/2013/01/07/aftonbladet.se/23.00-thumb.jpg
+    # to   ---> http://d2np6cnk6s6ggj.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
+    location /wsimages {
+        rewrite_log on;
+        rewrite ^/wsimages(/.*)$ $1 break;
+        proxy_pass http://d2np6cnk6s6ggj.cloudfront.net;
+        expires 30d;
+        error_page 415 = /empty;
+    }
+
+    location = /empty {
+        empty_gif;
+        expires 30d;
+    }
+
+    location = /favicon.ico {
+        access_log off;
+        log_not_found off;
+    }
+
+    location /static/admin {
+        root <%= node["webscreenshots"]["home"] %>/lib/python2.7/site-packages/django/contrib/admin/;
+        access_log off;
+        expires 30d;
+    }
+
+    location /static {
+        root <%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots/main;
+        access_log off;
+        expires 30d;
+    }
+
+    location / {
+        try_files $uri @proxy_to_app;
+    }
+
+    location @proxy_to_app {
+        include uwsgi_params;
+        uwsgi_param X-Real-IP $remote_addr;
+        uwsgi_param Host $http_host;
+        uwsgi_pass unix:///tmp/uwsgi.sock;
+    }
+}

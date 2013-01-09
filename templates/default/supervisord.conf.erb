@@ -25,6 +25,7 @@ priority=10
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celeryd]
+directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 command=<%= node["webscreenshots"]["home"] %>/bin/celery worker -c 4 -E -A webscreenshots.celeryapp -l info
 stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/celeryd.log
 redirect_stderr=true
@@ -36,6 +37,7 @@ priority=20
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celerybeat]
+directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 command=<%= node["webscreenshots"]["home"] %>/bin/celery beat -A webscreenshots.celeryapp -l info
 stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/celerybeat.log
 redirect_stderr=true
@@ -50,26 +52,13 @@ stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/flower.log
 redirect_stderr=true
 priority=40
 
-;[program:uwsgi_django]
-;directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
-;user=webscreenshots
-;command=<%= node["webscreenshots"]["working_dir"] %> --pp  -H /home/youruser/virtualenv/myblog --module dispatch --socket localhost:10001 --master
-;stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/uwsgi_django.log
-;redirect_stderr=true
-;environment=DJANGO_SETTINGS_MODULE='settings'
-;autostart=true
-;autorestart=true
-;priority=50
-;stopsignal=QUIT
-
-[program:gunicorn_django]
+[program:uwsgi_django]
 directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
-user=webscreenshots
-command=<%= node["webscreenshots"]["home"] %>/bin/python manage.py run_gunicorn 0.0.0.0:8000
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/gunicorn_django.log
+command=<%= node["webscreenshots"]["home"] %>/bin/uwsgi --ini uwsgi.ini
+stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/uwsgi_django.log
 redirect_stderr=true
+environment=DJANGO_SETTINGS_MODULE='settings'
 autostart=true
 autorestart=true
 priority=50
-;no adminmedia:
-;command=<%= node["webscreenshots"]["home"] %>/bin/gunicorn_django --workers=2 --bind 0.0.0.0:8000
+stopsignal=QUIT

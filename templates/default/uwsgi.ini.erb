@@ -1,0 +1,11 @@
+[uwsgi]
+master=True
+processes=5
+socket=/tmp/uwsgi.sock
+chmod-socket=666
+max-requests=3
+harakiri=20
+module=main.wsgi
+chdir=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+home=<%= node["webscreenshots"]["home"] %>
+vacuum=True
