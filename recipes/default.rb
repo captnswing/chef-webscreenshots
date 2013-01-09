@@ -134,7 +134,7 @@ include_recipe "webscreenshots::phantomjs"
 include_recipe "webscreenshots::supervisord"
 include_recipe "nginx::source"
 
-template "#{node["webscreenshots"]["working_dir"]}/src/webscreenshots/uwsgi.ini" do
+template "#{node["webscreenshots"]["home"]}/etc/uwsgi.ini" do
   source "uwsgi.ini.erb"
   owner my_user
   group my_group

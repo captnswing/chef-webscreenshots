@@ -6,7 +6,7 @@ template "/etc/init/supervisor.conf" do
   mode 0644
 end
 
-template "#{node["webscreenshots"]["supervisord"]["cfgfile"]}" do
+template "#{node["webscreenshots"]["home"]}/etc/supervisord.conf" do
   source "supervisord.conf.erb"
   mode 0644
   notifies :restart, "service[supervisor]"

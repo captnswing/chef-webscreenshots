@@ -7,8 +7,8 @@ port=*:9001
 ;password=super
 
 [supervisord]
-logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/supervisord.log
-pidfile=<%= node["webscreenshots"]["supervisord"]["piddir"] %>/supervisord.pid
+logfile=<%= node["webscreenshots"]["home"] %>/var/log/supervisord.log
+pidfile=<%= node["webscreenshots"]["home"] %>/var/etc/supervisord.pid
 nodaemon=true
 
 [rpcinterface:supervisor]
@@ -19,15 +19,15 @@ serverurl=unix:///tmp/supervisor.sock
 
 [program:redis]
 command=<%= node["webscreenshots"]["home"] %>/bin/redis-server
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/redis.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/redis.log
 redirect_stderr=true
 priority=10
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celeryd]
-directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+directory=<%= node["webscreenshots"]["home"] %>
 command=<%= node["webscreenshots"]["home"] %>/bin/celery worker -c 4 -E -A webscreenshots.celeryapp -l info
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/celeryd.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/celeryd.log
 redirect_stderr=true
 startsecs=10
 stopwaitsecs=300
@@ -37,9 +37,9 @@ priority=20
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celerybeat]
-directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+directory=<%= node["webscreenshots"]["home"] %>
 command=<%= node["webscreenshots"]["home"] %>/bin/celery beat -A webscreenshots.celeryapp -l info
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/celerybeat.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/celerybeat.log
 redirect_stderr=true
 startsecs=10
 ;stopwaitsecs=300
@@ -47,15 +47,16 @@ startsecs=10
 priority=30
 
 [program:flower]
+directory=<%= node["webscreenshots"]["home"] %>
 command=<%= node["webscreenshots"]["home"] %>/bin/celery flower --broker=redis://localhost:6379/0
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/flower.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/flower.log
 redirect_stderr=true
 priority=40
 
 [program:uwsgi_django]
-directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
-command=<%= node["webscreenshots"]["home"] %>/bin/uwsgi --ini uwsgi.ini
-stdout_logfile=<%= node["webscreenshots"]["supervisord"]["logdir"] %>/uwsgi_django.log
+directory=<%= node["webscreenshots"]["home"] %>
+command=<%= node["webscreenshots"]["home"] %>/bin/uwsgi --ini <%= node["webscreenshots"]["home"] %>/etc/uwsgi.ini
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/uwsgi_django.log
 redirect_stderr=true
 environment=DJANGO_SETTINGS_MODULE='settings'
 autostart=true
