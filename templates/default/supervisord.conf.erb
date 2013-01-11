@@ -1,14 +1,17 @@
 [unix_http_server]
 file=/tmp/supervisor.sock
+;username=super
+;password=duper
 
 [inet_http_server]
 port=*:9001
 ;username=super
-;password=super
+;password=duper
 
 [supervisord]
 logfile=<%= node["webscreenshots"]["home"] %>/var/log/supervisord.log
 pidfile=<%= node["webscreenshots"]["home"] %>/var/run/supervisord.pid
+identifier=<%= node["hostname"] %>
 nodaemon=true
 
 [rpcinterface:supervisor]
@@ -16,10 +19,17 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [supervisorctl]
 serverurl=unix:///tmp/supervisor.sock
+;serverurl=http://localhost:9001
+prompt=<%= node["hostname"] %>
+history_file=<%= node["webscreenshots"]["home"] %>/.supervisorctl_history
+
+[group:celery]
+programs=redis,celeryd,celerybeat,flower
 
 [program:redis]
 command=<%= node["webscreenshots"]["home"] %>/bin/redis-server
-stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/redis.log
+autorestart=true
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/%(program_name)s.log
 redirect_stderr=true
 priority=10
 
@@ -27,12 +37,12 @@ priority=10
 [program:celeryd]
 directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 command=<%= node["webscreenshots"]["home"] %>/bin/celery worker -c 4 -E -A webscreenshots.celeryapp -l info
-stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/celeryd.log
+autorestart=true
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/%(program_name)s.log
 redirect_stderr=true
-startsecs=10
-stopwaitsecs=300
-;stopsignal=KILL
-killasgroup=true
+startsecs=5
+stopwaitsecs=60
+stopsignal=TERM
 priority=20
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
@@ -41,27 +51,30 @@ directory=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 ; from https://github.com/Supervisor/supervisor/issues/140
 command=<%= node["webscreenshots"]["home"] %>/bin/celery beat
     -A webscreenshots.celeryapp
-    --pidfile=<%= node["webscreenshots"]["home"] %>/var/run/celerybeat.pid
+    --pidfile=<%= node["webscreenshots"]["home"] %>/var/run/%(program_name)s.pid
     --schedule=<%= node["webscreenshots"]["home"] %>/var/run/celerybeat-schedule.db
     -l info
-stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/celerybeat.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/%(program_name)s.log
 redirect_stderr=true
-startsecs=10
-;stopwaitsecs=300
-;stopsignal=KILL
+autorestart=true
+startsecs=5
+stopwaitsecs=10
+stopsignal=TERM
 priority=30
 
 [program:flower]
 directory=<%= node["webscreenshots"]["home"] %>
 command=<%= node["webscreenshots"]["home"] %>/bin/celery flower --broker=redis://localhost:6379/0
-stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/flower.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/%(program_name)s.log
+autorestart=true
 redirect_stderr=true
+autostart=false
 priority=40
 
 [program:uwsgi_django]
 directory=<%= node["webscreenshots"]["home"] %>
 command=<%= node["webscreenshots"]["home"] %>/bin/uwsgi --ini <%= node["webscreenshots"]["home"] %>/etc/uwsgi.ini
-stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/uwsgi_django.log
+stdout_logfile=<%= node["webscreenshots"]["home"] %>/var/log/%(program_name)s.log
 redirect_stderr=true
 environment=DJANGO_SETTINGS_MODULE='settings'
 autostart=true
