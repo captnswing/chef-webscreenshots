@@ -5,31 +5,43 @@
 server {
     listen 80 default_server;
 
-    server_name example.com;
+    server_name webscreenshots.captnswing.net;
     charset utf-8;
 
     error_log <%= node["webscreenshots"]["home"] %>/var/log/nginx-webscreenshots-error.log info;
     access_log <%= node["webscreenshots"]["home"] %>/var/log/nginx-webscreenshots-access.log;
 
     # from ---> /wsimages/280x280/2013/01/07/aftonbladet.se/23.00-thumb.jpg
-    # to   ---> http://d2np6cnk6s6ggj.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
+    # to   ---> http://xyz.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
     location ~ /wsimages/(\d+x\d+)(/.*)$ {
-        rewrite_log on;
+        #rewrite_log on;
         rewrite ^/wsimages/(\d+)x(\d+)(/.*)$ $3 break;
-        proxy_pass http://d2np6cnk6s6ggj.cloudfront.net;
+        proxy_pass <%= node["webscreenshots"]["cloudfront_server"] %>;
+        proxy_hide_header x-amz-id-2;
+        proxy_hide_header X-Amz-Cf-Id;
+        proxy_hide_header Via;
+        proxy_hide_header X-Cache;
+        proxy_hide_header x-amz-request-id;
+        proxy_hide_header x-amz-expiration;
         image_filter resize $1 $2;
         image_filter_buffer 100M;
-        expires 30d;
+        expires max;
         error_page 415 = /empty;
     }
 
     # from ---> /wsimages/2013/01/07/aftonbladet.se/23.00-thumb.jpg
-    # to   ---> http://d2np6cnk6s6ggj.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
+    # to   ---> http://xyz.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
     location /wsimages {
-        rewrite_log on;
+        #rewrite_log on;
         rewrite ^/wsimages(/.*)$ $1 break;
-        proxy_pass http://d2np6cnk6s6ggj.cloudfront.net;
-        expires 30d;
+        proxy_pass <%= node["webscreenshots"]["cloudfront_server"] %>;
+        proxy_hide_header x-amz-id-2;
+        proxy_hide_header X-amz-Cf-Id;
+        proxy_hide_header Via;
+        proxy_hide_header X-Cache;
+        proxy_hide_header x-amz-request-id;
+        proxy_hide_header x-amz-expiration;
+        expires max;
         error_page 415 = /empty;
     }
 
