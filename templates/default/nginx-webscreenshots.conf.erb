@@ -25,7 +25,8 @@ server {
         proxy_hide_header x-amz-expiration;
         image_filter resize $1 $2;
         image_filter_buffer 100M;
-        expires max;
+ 	    image_filter_jpeg_quality 90
+ 	    expires max;
         error_page 415 = /empty;
     }
 
