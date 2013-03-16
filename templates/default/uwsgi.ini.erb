@@ -1,3 +1,5 @@
+# todo: http://uwsgi-docs.readthedocs.org/en/latest/StatsServer.html
+# check: http://uwsgi-docs.readthedocs.org/en/latest/ThingsToKnow.html
 [uwsgi]
 master=True
 processes=5
@@ -6,6 +8,8 @@ chmod-socket=666
 max-requests=3
 harakiri=20
 module=main.wsgi
-chdir=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 home=<%= node["webscreenshots"]["home"] %>
+chdir=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
+touch-reload=<%= node["webscreenshots"]["working_dir"] %>/reload.uwsgi
 vacuum=True
+buffer-size=65536

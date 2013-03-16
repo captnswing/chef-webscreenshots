@@ -8,15 +8,15 @@ server {
     server_name webscreenshots.captnswing.net;
     charset utf-8;
 
-    error_log <%= node["webscreenshots"]["home"] %>/var/log/nginx-webscreenshots-error.log info;
-    access_log <%= node["webscreenshots"]["home"] %>/var/log/nginx-webscreenshots-access.log;
+    error_log <%= node['webscreenshots']['home'] %>/var/log/nginx-webscreenshots-error.log info;
+    access_log <%= node['webscreenshots']['home'] %>/var/log/nginx-webscreenshots-access.log;
 
     # from ---> /wsimages/280x280/2013/01/07/aftonbladet.se/23.00-thumb.jpg
     # to   ---> http://xyz.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
     location ~ /wsimages/(\d+x\d+)(/.*)$ {
         #rewrite_log on;
         rewrite ^/wsimages/(\d+)x(\d+)(/.*)$ $3 break;
-        proxy_pass <%= node["webscreenshots"]["cloudfront_server"] %>;
+        proxy_pass <%= node['webscreenshots']['cloudfront_server'] %>;
         proxy_hide_header x-amz-id-2;
         proxy_hide_header X-Amz-Cf-Id;
         proxy_hide_header Via;
@@ -25,8 +25,8 @@ server {
         proxy_hide_header x-amz-expiration;
         image_filter resize $1 $2;
         image_filter_buffer 100M;
- 	    image_filter_jpeg_quality 90
- 	    expires max;
+        image_filter_jpeg_quality 90;
+        expires max;
         error_page 415 = /empty;
     }
 
@@ -35,7 +35,7 @@ server {
     location /wsimages {
         #rewrite_log on;
         rewrite ^/wsimages(/.*)$ $1 break;
-        proxy_pass <%= node["webscreenshots"]["cloudfront_server"] %>;
+        proxy_pass <%= node['webscreenshots']['cloudfront_server'] %>;
         proxy_hide_header x-amz-id-2;
         proxy_hide_header X-amz-Cf-Id;
         proxy_hide_header Via;
@@ -57,13 +57,13 @@ server {
     }
 
     location /static/admin {
-        root <%= node["webscreenshots"]["home"] %>/lib/python2.7/site-packages/django/contrib/admin/;
+        root <%= node['webscreenshots']['home'] %>/lib/python2.7/site-packages/django/contrib/admin/;
         access_log off;
         expires 30d;
     }
 
     location /static {
-        root <%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots/main;
+        root <%= node['webscreenshots']['working_dir'] %>/src/webscreenshots/main;
         access_log off;
         expires 30d;
     }

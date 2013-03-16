@@ -11,6 +11,7 @@ default["webscreenshots"]["user"] = "webscreenshots"
 default["webscreenshots"]["group"] = "webscreenshots"
 default["webscreenshots"]["home"] = "/opt/webscreenshots"
 default["webscreenshots"]["cloudfront_server"] = "http://d2np6cnk6s6ggj.cloudfront.net"
+default["webscreenshots"]["django_settings_module"] = "webscreenshots.settings.prod"
 
 # running as vagrant?
 default["webscreenshots"]["vagrant"] = node["kernel"]["modules"].attribute?("vboxguest")
@@ -18,7 +19,7 @@ default["webscreenshots"]["vagrant"] = node["kernel"]["modules"].attribute?("vbo
 # required for chef-solo
 set["postgresql"]["password"]["postgres"] = "postgres"
 
-override["nginx"]["install_method"] = "source"
-override["nginx"]["version"] = "1.3.10"
-override["nginx"]["source"]["checksum"] = "248c43a4f77b9add6eaad2"
-override["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
+set["nginx"]["install_method"] = "source"
+set["nginx"]["version"] = "1.3.10"
+set["nginx"]["source"]["checksum"] = "248c43a4f77b9add6eaad2"
+set["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
