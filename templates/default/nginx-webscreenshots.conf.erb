@@ -63,7 +63,7 @@ server {
     }
 
     location /static {
-        root <%= node['webscreenshots']['working_dir'] %>/src/webscreenshots/main;
+        alias <%= node['webscreenshots']['working_dir'] %>/src/webscreenshots/static-media;
         access_log off;
         expires 30d;
     }
