@@ -19,7 +19,13 @@ default["webscreenshots"]["vagrant"] = node["kernel"]["modules"].attribute?("vbo
 # required for chef-solo
 set["postgresql"]["password"]["postgres"] = "postgres"
 
-set["nginx"]["install_method"] = "source"
-set["nginx"]["version"] = "1.3.10"
-set["nginx"]["source"]["checksum"] = "248c43a4f77b9add6eaad2"
-set["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
+default["nginx"]["install_method"] = "source"
+#default["nginx"]["version"] = "1.3.14"
+# shasum -a 256 nginx-1.3.14.tar.gz
+#default["nginx"]["source"]["checksum"] = "b7ea92ac5e3d716c1b43b927547d3a89b0e35e3a6edecad64cf1914f82494950"
+#default['nginx']['source']['modules'] = [
+#  "http_ssl_module",
+#  "http_gzip_static_module",
+#  "http_image_filter_module"
+#]
+default["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
