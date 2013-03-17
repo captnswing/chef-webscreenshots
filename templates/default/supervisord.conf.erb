@@ -39,7 +39,7 @@ priority=10
 [program:celeryd]
 environment=DJANGO_SETTINGS_MODULE=<%= node['webscreenshots']['django_settings_module'] %>
 directory=<%= node['webscreenshots']['working_dir'] %>/src/webscreenshots
-command=<%= node['webscreenshots']['home'] %>/bin/celery worker -c 4 -E -A webscreenshots.celeryapp -l info
+command=<%= node['webscreenshots']['home'] %>/bin/celery worker -c 10 -E -A webscreenshots.celeryapp -l info
 autorestart=true
 stdout_logfile=<%= node['webscreenshots']['home'] %>/var/log/%(program_name)s.log
 redirect_stderr=true
