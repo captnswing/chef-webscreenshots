@@ -7,9 +7,9 @@ socket=/tmp/uwsgi.sock
 chmod-socket=666
 max-requests=3
 harakiri=20
-module=main.wsgi
+module=webscreenshots.wsgi
 home=<%= node["webscreenshots"]["home"] %>
 chdir=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
 touch-reload=<%= node["webscreenshots"]["working_dir"] %>/reload.uwsgi
 vacuum=True
-buffer-size=65536
+buffer-size=32768
