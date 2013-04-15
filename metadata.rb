@@ -4,12 +4,13 @@ maintainer_email 'frank.hoffsummer@gmail.com'
 license 'All rights reserved'
 description 'Installs and configures webscreenshots application'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '0.0.4'
+version '0.0.6'
 
 depends 'runit'
 depends 'python'
 depends 'postgresql'
 depends 'nginx'
+depends 'redisio'
 
 supports 'scientific', '>= 6.0'
 supports 'ubuntu', '>= 10.4'

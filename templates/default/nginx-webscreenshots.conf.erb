@@ -8,8 +8,8 @@ server {
     server_name webscreenshots.captnswing.net;
     charset utf-8;
 
-    error_log <%= node['webscreenshots']['home'] %>/var/log/nginx-webscreenshots-error.log info;
-    access_log <%= node['webscreenshots']['home'] %>/var/log/nginx-webscreenshots-access.log;
+    error_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-error.log info;
+    access_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-access.log;
 
     # from ---> /wsimages/280x280/2013/01/07/aftonbladet.se/23.00-thumb.jpg
     # to   ---> http://xyz.cloudfront.net/2013/01/07/aftonbladet.se/23.00-thumb.jpg
@@ -57,13 +57,13 @@ server {
     }
 
     location /static/admin {
-        root <%= node['webscreenshots']['home'] %>/lib/python2.7/site-packages/django/contrib/admin/;
+        root <%= node['webscreenshots']['venv_home'] %>/lib/python2.7/site-packages/Django-1.4.5-py2.7.egg/django/contrib/admin;
         access_log off;
         expires 30d;
     }
 
     location /static {
-        alias <%= node['webscreenshots']['working_dir'] %>/src/webscreenshots/static-media;
+        alias <%= node['webscreenshots']['project_root'] %>/src/webscreenshots/static-media;
         access_log off;
         expires 30d;
     }

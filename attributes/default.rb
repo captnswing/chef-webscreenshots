@@ -1,20 +1,13 @@
-default["webscreenshots"]["s3bucketname"] = "svti-webscreenshots"
-
-# IAM user with access to configured S3 bucket
-# http://docs.amazonwebservices.com/IAM/latest/UserGuide/GSGHowToCreateAdminsGroup.html
-default["webscreenshots"]["iam"]["username"] = "webscreenshots"
-# TODO: encrypted databags with chef solo?
-default["webscreenshots"]["iam"]["accesskeyid"] = "AKIAJGUNM2DBSJAZ777Q"
-default["webscreenshots"]["iam"]["secretkey"] = "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"
-
-default["webscreenshots"]["user"] = "webscreenshots"
-default["webscreenshots"]["group"] = "webscreenshots"
-default["webscreenshots"]["home"] = "/opt/webscreenshots"
+default["webscreenshots"]["user"] = "ubuntu"
+default["webscreenshots"]["group"] = "ubuntu"
+default["webscreenshots"]["venv_home"] = "/opt/webscreenshots"
 default["webscreenshots"]["cloudfront_server"] = "http://d2np6cnk6s6ggj.cloudfront.net"
-default["webscreenshots"]["django_settings_module"] = "webscreenshots.settings.prod"
+default["webscreenshots"]["django_settings_module"] = "webscreenshots.settings.test"
 
 # running as vagrant?
 default["webscreenshots"]["vagrant"] = node["kernel"]["modules"].attribute?("vboxguest")
+
+default['webscreenshots']['project_root'] = "#{node['webscreenshots']['venv_home']}"
 
 # required for chef-solo
 set["postgresql"]["password"]["postgres"] = "postgres"

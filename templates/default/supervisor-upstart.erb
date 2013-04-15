@@ -5,6 +5,6 @@ stop on runlevel [!2345]
 
 respawn
 
-chdir <%= node["webscreenshots"]["home"] %>
+chdir <%= node["webscreenshots"]["venv_home"] %>
 
-exec <%= node["webscreenshots"]["home"] %>/bin/supervisord -u <%= node["webscreenshots"]["user"] %> --nodaemon --configuration <%= node["webscreenshots"]["home"] %>/etc/supervisord.conf
+exec <%= node["webscreenshots"]["venv_home"] %>/bin/supervisord -u <%= node["webscreenshots"]["user"] %> --nodaemon --configuration <%= node["webscreenshots"]["venv_home"] %>/etc/supervisord.conf

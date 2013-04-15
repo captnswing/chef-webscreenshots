@@ -6,7 +6,7 @@ template "/etc/init/supervisor.conf" do
   mode 0644
 end
 
-template "#{node["webscreenshots"]["home"]}/etc/supervisord.conf" do
+template "#{node["webscreenshots"]["venv_home"]}/etc/supervisord.conf" do
   source "supervisord.conf.erb"
   mode 0644
   owner node["webscreenshots"]["user"]

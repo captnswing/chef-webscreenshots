@@ -8,8 +8,8 @@ chmod-socket=666
 max-requests=3
 harakiri=20
 module=webscreenshots.wsgi
-home=<%= node["webscreenshots"]["home"] %>
-chdir=<%= node["webscreenshots"]["working_dir"] %>/src/webscreenshots
-touch-reload=<%= node["webscreenshots"]["working_dir"] %>/reload.uwsgi
+home=<%= node["webscreenshots"]["venv_home"] %>
+chdir=<%= node["webscreenshots"]["project_root"] %>/src/webscreenshots
+touch-reload=<%= node["webscreenshots"]["project_root"] %>/src/webscreenshots/wsgi.py
 vacuum=True
 buffer-size=32768

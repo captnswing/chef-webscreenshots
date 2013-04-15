@@ -6,19 +6,8 @@ include_recipe 'postgresql::server'
 
 my_user = node['webscreenshots']['user']
 my_group = node['webscreenshots']['group']
-my_venv = node['webscreenshots']['home']
-
-#--------
-# create group and user
-#--------
-group my_group
-
-user my_user do
-  gid my_group
-  home my_venv
-  shell '/bin/bash'
-  system true
-end
+my_venv = node['webscreenshots']['venv_home']
+python = "#{node['webscreenshots']['venv_home']}/bin/python"
 
 #--------
 # create required directories
@@ -59,92 +48,78 @@ case node['platform_family']
     package 'freetype-devel'
 end
 
-python_packages = [
-    'boto',
-    'celery-with-redis',
-    'distribute',
-    'django',
-    'git+git://github.com/mher/flower.git',
-    #'flower',
-    'gunicorn',
-    'ipython',
-    # PIL --> pillow, see http://stackoverflow.com/a/12359864/41404
-    'pillow',
-    'psycopg2',
-    'python-dateutil',
-    'pytz',
-    'uwsgi',
-    'supervisor'
-]
-
-python_packages.each do |pypkg|
-  python_pip '#{pypkg}' do
-    virtualenv my_venv
-    user my_user
-    group my_group
-    action :install
-  end
-end
+#python_packages = %w(boto celery-with-redis distribute django git+git://github.com/mher/flower.git ipython pillow psycopg2 python-dateutil pytz uwsgi supervisor south)
+#
+#python_packages.each do |pypkg|
+#  python_pip '#{pypkg}' do
+#    virtualenv my_venv
+#    user my_user
+#    group my_group
+#    action :install
+#  end
+#end
 
 #--------
 # install webscreenshots app
 #--------
-if node['webscreenshots']['vagrant']
-  node.set['webscreenshots']['working_dir'] = '/vagrant'
-  node.set['webscreenshots']['django_settings_module'] = 'webscreenshots.settings.local'
-else
-  node.set['webscreenshots']['working_dir'] = "#{node['webscreenshots']['home']}/src/webscreenshots"
-
-  case node['platform_family']
-    when 'debian'
-      package 'mercurial'
-  end
-
-  execute 'clone repo' do
-    user my_user
-    group my_group
-    cwd "#{node['webscreenshots']['home']}/src"
-    command 'hg clone https://captnswing@bitbucket.org/captnswing/webscreenshots'
-    creates "#{node['webscreenshots']['working_dir']}"
-  end
-
-  execute 'update repo' do
-    user my_user
-    group my_group
-    cwd "#{node['webscreenshots']['working_dir']}"
-    command 'hg pull >/dev/null; hg update >/dev/null'
-  end
+case node['platform_family']
+  when 'debian'
+    package 'mercurial'
 end
 
-execute 'install webscreenshots' do
-  #user my_user
-  #group my_group
-  cwd "#{node['webscreenshots']['working_dir']}"
-  command "#{node['webscreenshots']['home']}/bin/python setup.py develop >/dev/null"
+execute 'clone repo' do
+  user my_user
+  group my_group
+  cwd "#{node['webscreenshots']['project_root']}/src"
+  command 'hg clone https://captnswing@bitbucket.org/captnswing/webscreenshots'
+  creates "#{node['webscreenshots']['project_root']}/src/webscreenshots"
+end
+
+execute 'update repo' do
+  user my_user
+  group my_group
+  cwd "#{node['webscreenshots']['project_root']}"
+  command 'hg pull;  hg update'
+#  command 'hg pull >/dev/null; hg update >/dev/null'
+end
+
+execute 'webscreenshots install' do
+  user my_user
+  group my_group
+  cwd "#{node['webscreenshots']['project_root']}"
+  command "#{python} setup.py develop"
 end
 
 execute 'webscreenshots syncdb' do
   user my_user
   group my_group
-  cwd "#{node['webscreenshots']['working_dir']}/src/webscreenshots"
-  command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}; #{node['webscreenshots']['home']}/bin/python manage.py syncdb --noinput >/dev/null"
+  cwd "#{node['webscreenshots']['project_root']}/src/webscreenshots"
+  command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}; #{python} manage.py syncdb --noinput >/dev/null"
+end
+
+execute 'webscreenshots migrate' do
+  user my_user
+  group my_group
+  cwd "#{node['webscreenshots']['project_root']}/src/webscreenshots"
+  command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}; #{python} manage.py migrate main"
 end
 
 if node['webscreenshots']['vagrant']
   execute 'django runserver' do
     user my_user
     group my_group
-    cwd "#{node['webscreenshots']['working_dir']}/src/webscreenshots"
-    command "export DJANGO_SETTINGS_MODULE=webscreenshots.settings.local;#{node['webscreenshots']['home']}/bin/python manage.py runserver 0.0.0.0:8000 &"
+    cwd "#{node['webscreenshots']['project_root']}/src/webscreenshots"
+    command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']};#{python} manage.py runserver 0.0.0.0:8000 &"
   end
 end
 
-include_recipe 'webscreenshots::redis'
+include_recipe 'redisio::install'
+include_recipe 'redisio::disable' # using supervisord
 include_recipe 'webscreenshots::phantomjs'
 include_recipe 'webscreenshots::supervisord'
 include_recipe 'nginx'
 
-template "#{node['webscreenshots']['home']}/etc/uwsgi.ini" do
+template "#{node['webscreenshots']['venv_home']}/etc/uwsgi.ini" do
   source 'uwsgi.ini.erb'
   owner my_user
   group my_group
