@@ -16,7 +16,7 @@ This cookbook makes use of `node['platform_family']` to simplify platform select
 
 # License
 
-Copyright 2012 Frank Hoffsümmer
+Copyright 2012-2013 Frank Hoffsümmer
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
