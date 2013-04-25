@@ -30,7 +30,7 @@ python_virtualenv my_venv do
 end
 
 #--------
-# install python packages into venv
+# install prerequisites for python packages
 #--------
 case node['platform_family']
   when 'debian'
@@ -47,17 +47,6 @@ case node['platform_family']
     package 'libpng-devel'
     package 'freetype-devel'
 end
-
-#python_packages = %w(boto celery-with-redis distribute django git+git://github.com/mher/flower.git ipython pillow psycopg2 python-dateutil pytz uwsgi supervisor south)
-#
-#python_packages.each do |pypkg|
-#  python_pip '#{pypkg}' do
-#    virtualenv my_venv
-#    user my_user
-#    group my_group
-#    action :install
-#  end
-#end
 
 #--------
 # install webscreenshots app
@@ -104,17 +93,8 @@ execute 'webscreenshots migrate' do
   command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}; #{python} manage.py migrate main"
 end
 
-if node['webscreenshots']['vagrant']
-  execute 'django runserver' do
-    user my_user
-    group my_group
-    cwd "#{node['webscreenshots']['project_root']}/src/webscreenshots"
-    command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']};#{python} manage.py runserver 0.0.0.0:8000 &"
-  end
-end
-
 include_recipe 'redisio::install'
-include_recipe 'redisio::disable' # using supervisord
+include_recipe 'redisio::disable' # using supervisord instead
 include_recipe 'webscreenshots::phantomjs'
 include_recipe 'webscreenshots::supervisord'
 include_recipe 'nginx'
