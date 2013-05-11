@@ -5,7 +5,6 @@ remote_file "/tmp/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}.ta
   source node["webscreenshots"]["phantomjs"]["uri"]
   mode "0644"
   action :create_if_missing
-  not_if "test -e /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}"
 end
 
 bash "install phantomjs" do
@@ -13,8 +12,9 @@ bash "install phantomjs" do
   user "root"
   code <<-EOS
     tar -jxvf phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}.tar.bz2 >/dev/null
+    rm -rf /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}
     mv phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64 /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}
-    ln -s /opt/casperjs-#{node["webscreenshots"]["phantomjs"]["version"]}/bin/casperjs /usr/local/bin/phantomjs
+    ln -sf /opt/casperjs-#{node["webscreenshots"]["phantomjs"]["version"]}/bin/casperjs /usr/local/bin/phantomjs
   EOS
   not_if "test -e /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}"
 end
@@ -26,16 +26,16 @@ remote_file "/tmp/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}.tar.
   source node["webscreenshots"]["casperjs"]["uri"]
   mode "0644"
   action :create_if_missing
-  not_if "test -e /opt/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}"
 end
 
 bash "install casperjs" do
   cwd "/tmp"
   user "root"
   code <<-EOS
-    tar xfz phantomjs-#{node["webscreenshots"]["casperjs"]["version"]}.tar.gz >/dev/null
+    tar xfz casperjs-#{node["webscreenshots"]["casperjs"]["version"]}.tar.gz >/dev/null
+    rm -rf /opt/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}
     mv n1k0-casperjs-* /opt/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}
-    ln -s /opt/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}/bin/casperjs /usr/local/bin/casperjs
+    ln -sf /opt/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}/bin/casperjs /usr/local/bin/casperjs
   EOS
   not_if "test -e /opt/casperjs-#{node["webscreenshots"]["casperjs"]["version"]}"
 end
