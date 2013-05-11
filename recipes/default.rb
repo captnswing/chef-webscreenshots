@@ -95,7 +95,7 @@ end
 
 include_recipe 'redisio::install'
 include_recipe 'redisio::disable' # using supervisord instead
-include_recipe 'webscreenshots::phantomjs'
+include_recipe 'webscreenshots::casperjs'
 include_recipe 'webscreenshots::supervisord'
 include_recipe 'nginx'
 
