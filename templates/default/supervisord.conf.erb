@@ -102,7 +102,7 @@ priority=40
 [program:uwsgi_django]
 environment=DJANGO_SETTINGS_MODULE=<%= node['webscreenshots']['django_settings_module'] %>
 directory=<%= node['webscreenshots']['venv_home'] %>
-command=<%= node['webscreenshots']['venv_home'] %>/bin/uwsgi --ini <%= node['webscreenshots']['venv_home'] %>/etc/uwsgi.ini
+command=bin/uwsgi --ini etc/uwsgi.ini
 stdout_logfile=<%= node['webscreenshots']['venv_home'] %>/var/log/%(program_name)s.log
 redirect_stderr=true
 autorestart=true
