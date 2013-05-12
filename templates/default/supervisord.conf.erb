@@ -25,7 +25,8 @@ prompt=<%= node['hostname'] %>
 history_file=<%= node['webscreenshots']['venv_home'] %>/.supervisorctl_history
 
 [group:celery]
-programs=redis,celeryd_default,celeryd_webscreenshots,celerybeat,flower
+;programs=redis,celeryd_default,celeryd_webscreenshots,celerybeat,flower
+programs=redis,celeryd_default,celerybeat,flower
 autostart=false
 
 [program:redis]
