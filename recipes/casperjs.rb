@@ -14,7 +14,7 @@ bash "install phantomjs" do
     tar -jxvf phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}.tar.bz2 >/dev/null
     rm -rf /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}
     mv phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}-linux-x86_64 /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}
-    ln -sf /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}/bin/casperjs /usr/bin/phantomjs
+    ln -sf /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}/bin/phantomjs /usr/bin/phantomjs
   EOS
   not_if "test -e /opt/phantomjs-#{node["webscreenshots"]["phantomjs"]["version"]}"
 end

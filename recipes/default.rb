@@ -12,11 +12,13 @@ python = "#{node['webscreenshots']['venv_home']}/bin/python"
 #--------
 # create required directories
 #--------
-%W(#{my_venv} #{my_venv}/etc/ #{my_venv}/var #{my_venv}/var/log #{my_venv}/var/run #{my_venv}/src).each do |dir|
+%W(#{my_venv} #{my_venv}/etc/ #{my_venv}/var #{my_venv}/var/log #{my_venv}/var/run #{my_venv}/src #{node['webscreenshots']['project_root']}).each do |dir|
   directory "#{dir}" do
     owner my_user
     group my_group
     mode '0755'
+    action :create
+    recursive true
   end
 end
 
@@ -59,38 +61,34 @@ end
 execute 'clone repo' do
   user my_user
   group my_group
-  cwd "#{node['webscreenshots']['project_root']}/src"
+  cwd "#{node['webscreenshots']['project_root']}/../"
   command 'hg clone https://captnswing@bitbucket.org/captnswing/webscreenshots'
-  creates "#{node['webscreenshots']['project_root']}/src/webscreenshots"
+  not_if "test -e #{node['webscreenshots']['project_root']}/src/webscreenshots"
 end
 
 execute 'update repo' do
   user my_user
   group my_group
   cwd "#{node['webscreenshots']['project_root']}"
-  command 'hg pull;  hg update'
-#  command 'hg pull >/dev/null; hg update >/dev/null'
+  command 'hg pull >/dev/null; hg update >/dev/null'
 end
 
 execute 'webscreenshots install' do
   user my_user
   group my_group
   cwd "#{node['webscreenshots']['project_root']}"
-  command "#{python} setup.py develop"
+  command "#{python} setup.py develop >/dev/null"
 end
 
-execute 'webscreenshots syncdb' do
+bash 'webscreenshots createdb' do
   user my_user
-  group my_group
   cwd "#{node['webscreenshots']['project_root']}/src/webscreenshots"
-  command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}; #{python} manage.py syncdb --noinput >/dev/null"
-end
-
-execute 'webscreenshots migrate' do
-  user my_user
-  group my_group
-  cwd "#{node['webscreenshots']['project_root']}/src/webscreenshots"
-  command "export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}; #{python} manage.py migrate main"
+  code <<-EOS
+    export DJANGO_SETTINGS_MODULE=#{node['webscreenshots']['django_settings_module']}
+    #{python} manage.py syncdb --noinput
+    #{python} manage.py migrate main
+    #{python} manage.py loaddata initial_data
+  EOS
 end
 
 include_recipe 'redisio::install'
@@ -107,12 +105,20 @@ template "#{node['webscreenshots']['venv_home']}/etc/uwsgi.ini" do
   notifies :restart, 'service[supervisor]'
 end
 
-template '/etc/nginx/conf.d/webscreenshots.conf' do
+template "/opt/nginx-#{node['nginx']['source']['version']}/conf/webscreenshots.conf" do
   source 'nginx-webscreenshots.conf.erb'
   owner 'root'
   group 'root'
   mode 0644
-  notifies :reload, 'service[nginx]'
+  notifies :restart, 'service[nginx]'
+end
+
+template "/opt/nginx-#{node['nginx']['source']['version']}/conf/nginx.conf" do
+  source 'nginx.conf.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+  notifies :restart, 'service[nginx]'
 end
 
 case node['platform']

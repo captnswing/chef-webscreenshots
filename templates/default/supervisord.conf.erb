@@ -107,4 +107,5 @@ stdout_logfile=<%= node['webscreenshots']['venv_home'] %>/var/log/%(program_name
 redirect_stderr=true
 autorestart=true
 priority=50
-stopsignal=QUIT
+; this is very important!
+stopsignal=INT
