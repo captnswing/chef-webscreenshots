@@ -1,4 +1,4 @@
-user www-data;
+user <%= node['webscreenshots']['user'] %>;
 worker_processes  2;
 daemon off;
 

@@ -3,10 +3,13 @@
 # http://adw0rd.com/2012/11/10/django-nginx-image/en/
 # http://serverfault.com/questions/186783/nginx-saving-images-resized-via-image-filter-locally
 server {
-    listen 80 default_server;
-
     server_name webscreenshots.captnswing.net;
     charset utf-8;
+    listen 80 default_server;
+
+    proxy_buffering on;
+    proxy_buffer_size 8k;
+    proxy_buffers 8 64k;
 
     error_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-error.log info;
     access_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-access.log;
