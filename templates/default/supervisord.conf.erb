@@ -36,30 +36,30 @@ redirect_stderr=true
 priority=10
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
-[program:celeryd_webscreenshots]
-environment=DJANGO_SETTINGS_MODULE='<%= node['webscreenshots']['django_settings_module'] %>',PYTHONPATH='.:$PYTHONPATH'
-directory=<%= node['webscreenshots']['project_root'] %>/src/webscreenshots
-command=<%= node['webscreenshots']['venv_home'] %>/bin/celery worker
-    -c 10
-    -E
-    -A webscreenshots.celeryapp
-    -l info
-    -n webscreenshots
-    -Q phantomjs
-autorestart=true
-stdout_logfile=<%= node['webscreenshots']['venv_home'] %>/var/log/%(program_name)s.log
-redirect_stderr=true
-startsecs=5
-stopwaitsecs=60
-stopsignal=TERM
-priority=20
+;[program:celeryd_webscreenshots]
+;environment=DJANGO_SETTINGS_MODULE='<%= node['webscreenshots']['django_settings_module'] %>',PYTHONPATH='.:$PYTHONPATH'
+;directory=<%= node['webscreenshots']['project_root'] %>/src/webscreenshots
+;command=<%= node['webscreenshots']['venv_home'] %>/bin/celery worker
+;    -c 10
+;    -E
+;    -A webscreenshots.celeryapp
+;    -l info
+;    -n casperjs
+;    -Q casperjs
+;autorestart=true
+;stdout_logfile=<%= node['webscreenshots']['venv_home'] %>/var/log/%(program_name)s.log
+;redirect_stderr=true
+;startsecs=5
+;stopwaitsecs=60
+;stopsignal=TERM
+;priority=20
 
 ; check out https://github.com/celery/celery/tree/master/extra/supervisord
 [program:celeryd_default]
 environment=DJANGO_SETTINGS_MODULE='<%= node['webscreenshots']['django_settings_module'] %>',PYTHONPATH='.:$PYTHONPATH'
 directory=<%= node['webscreenshots']['project_root'] %>/src/webscreenshots
 command=<%= node['webscreenshots']['venv_home'] %>/bin/celery worker
-    -c 2
+    -c 4
     -E
     -A webscreenshots.celeryapp
     -l info
