@@ -59,7 +59,7 @@ priority=10
 environment=DJANGO_SETTINGS_MODULE='<%= node['webscreenshots']['django_settings_module'] %>',PYTHONPATH='.:$PYTHONPATH'
 directory=<%= node['webscreenshots']['project_root'] %>/src/webscreenshots
 command=<%= node['webscreenshots']['venv_home'] %>/bin/celery worker
-    -c 4
+    -c 10
     -E
     -A webscreenshots.celeryapp
     -l info
