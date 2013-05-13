@@ -20,6 +20,8 @@ server {
         #rewrite_log on;
         rewrite ^/wsimages/(\d+)x(\d+)(/.*)$ $3 break;
         proxy_pass <%= node['webscreenshots']['cloudfront_server'] %>;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
         proxy_hide_header x-amz-id-2;
         proxy_hide_header X-Amz-Cf-Id;
         proxy_hide_header Via;
@@ -39,6 +41,8 @@ server {
         #rewrite_log on;
         rewrite ^/wsimages(/.*)$ $1 break;
         proxy_pass <%= node['webscreenshots']['cloudfront_server'] %>;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
         proxy_hide_header x-amz-id-2;
         proxy_hide_header X-amz-Cf-Id;
         proxy_hide_header Via;
