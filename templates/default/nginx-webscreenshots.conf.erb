@@ -11,7 +11,7 @@ server {
     proxy_buffer_size 8k;
     proxy_buffers 8 64k;
 
-    error_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-error.log info;
+    error_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-error.log notice;
     access_log <%= node['webscreenshots']['venv_home'] %>/var/log/nginx-webscreenshots-access.log;
 
     # from ---> /wsimages/280x280/2013/01/07/aftonbladet.se/23.00-thumb.jpg
