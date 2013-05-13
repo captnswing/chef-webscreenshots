@@ -34,6 +34,7 @@ server {
         image_filter_jpeg_quality 90;
         expires max;
         error_page 415 = /empty;
+        add_header Cache-Control public;
     }
 
     # from ---> /wsimages/2013/01/07/aftonbladet.se/23.00-thumb.jpg
@@ -52,6 +53,7 @@ server {
         proxy_hide_header x-amz-expiration;
         expires max;
         error_page 415 = /empty;
+        add_header Cache-Control public;
     }
 
     location = /empty {
