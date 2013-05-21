@@ -14,12 +14,8 @@ default["webscreenshots"]["django_settings_module"] = "webscreenshots.settings.p
 # required for chef-solo
 default["postgresql"]["password"]["postgres"] = "postgres"
 
-# can't get it to work with runit, see https://tickets.opscode.com/browse/COOK-2049
-default["nginx"]["init_style"] = "init"
 default["nginx"]["install_method"] = "source"
-default["nginx"]["source"]["prefix"] = "/opt/nginx"
-default["nginx"]["source"]["url"] = "http://nginx.org/download/nginx-1.4.1.tar.gz"
+default["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
 default["nginx"]["source"]["version"] = "1.4.1"
-# shasum -a 256 nginx-1.4.1.tar.gz
-default["nginx"]["source"]["checksum"] = "84aeb7a131fccff036dc80283dd98c989d2844eb84359cfe7c4863475de923a9"
-default["nginx"]["source"]["default_configure_flags"] = ["--prefix=/opt/nginx-#{node["nginx"]["source"]["version"]} --with-http_image_filter_module"]
+default["nginx"]["source"]["url"] = "http://nginx.org/download/nginx-1.4.1.tar.gz"
+default["nginx"]["source"]["checksum"] = "84aeb7a131fccff036dc80283dd98c989d2844eb84359cfe7c4863475de923a9" # shasum -a 256 nginx-1.4.1.tar.gz

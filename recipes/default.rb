@@ -41,7 +41,7 @@ case node['platform_family']
     package 'libfreetype6-dev'
     # for flower
     package 'git-all'
-    #for nginx
+    # for nginx
     package 'libgd2-xpm-dev'
   when 'rhel'
     # for PIL / pillow
@@ -105,7 +105,7 @@ template "#{node['webscreenshots']['venv_home']}/etc/uwsgi.ini" do
   notifies :restart, 'service[supervisor]'
 end
 
-template "/opt/nginx-#{node['nginx']['source']['version']}/conf/webscreenshots.conf" do
+template "#{node['nginx']['dir']}/webscreenshots.conf" do
   source 'nginx-webscreenshots.conf.erb'
   owner 'root'
   group 'root'
@@ -113,7 +113,7 @@ template "/opt/nginx-#{node['nginx']['source']['version']}/conf/webscreenshots.c
   notifies :restart, 'service[nginx]'
 end
 
-template "/opt/nginx-#{node['nginx']['source']['version']}/conf/nginx.conf" do
+template "#{node['nginx']['dir']}/nginx.conf" do
   source 'nginx.conf.erb'
   owner 'root'
   group 'root'
