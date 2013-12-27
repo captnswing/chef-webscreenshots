@@ -39,8 +39,8 @@ case node['platform_family']
     # for PIL / pillow
     package 'libjpeg8-dev'
     package 'libfreetype6-dev'
-    # for flower
-    package 'git-all'
+      # for flower
+      package 'git-all'
     # for nginx
     package 'libgd2-xpm-dev'
   when 'rhel'
@@ -66,18 +66,18 @@ execute 'clone repo' do
   not_if "test -e #{node['webscreenshots']['project_root']}/src/webscreenshots"
 end
 
-execute 'update repo' do
-  user my_user
-  group my_group
-  cwd "#{node['webscreenshots']['project_root']}"
-  command 'hg pull >/dev/null; hg update >/dev/null'
-end
+#execute 'update repo' do
+#  user my_user
+#  group my_group
+#  cwd "#{node['webscreenshots']['project_root']}"
+#  command 'hg pull >/dev/null; hg update >/dev/null'
+#end
 
 execute 'webscreenshots install' do
   user my_user
   group my_group
   cwd "#{node['webscreenshots']['project_root']}"
-  command "#{python} setup.py develop >/dev/null"
+  command "#{python} setup.py develop"
 end
 
 bash 'webscreenshots createdb' do
@@ -93,8 +93,8 @@ end
 
 include_recipe 'redisio::install'
 include_recipe 'redisio::disable' # using supervisord instead
-include_recipe 'webscreenshots::casperjs'
-include_recipe 'webscreenshots::supervisord'
+include_recipe 'chef-webscreenshots::casperjs'
+include_recipe 'chef-webscreenshots::supervisord'
 include_recipe 'nginx'
 
 template "#{node['webscreenshots']['venv_home']}/etc/uwsgi.ini" do

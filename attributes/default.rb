@@ -16,6 +16,6 @@ default["postgresql"]["password"]["postgres"] = "postgres"
 
 default["nginx"]["install_method"] = "source"
 default["nginx"]["configure_flags"] = ["--with-http_image_filter_module"]
-default["nginx"]["source"]["version"] = "1.4.1"
-default["nginx"]["source"]["url"] = "http://nginx.org/download/nginx-1.4.1.tar.gz"
-default["nginx"]["source"]["checksum"] = "84aeb7a131fccff036dc80283dd98c989d2844eb84359cfe7c4863475de923a9" # shasum -a 256 nginx-1.4.1.tar.gz
+#default["nginx"]["version"] = "1.4.1"
+#default["nginx"]["source"]["version"] = "1.4.1"
+#default["nginx"]["source"]["checksum"] = "84aeb7a131fccff036dc80283dd98c989d2844eb84359cfe7c4863475de923a9" # shasum -a 256 nginx-1.4.1.tar.gz

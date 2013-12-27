@@ -1,4 +1,4 @@
-name 'webscreenshots'
+name 'chef-webscreenshots'
 maintainer 'Frank Hoffsummer'
 maintainer_email 'frank.hoffsummer@gmail.com'
 license 'All rights reserved'
